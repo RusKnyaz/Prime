@@ -1,13 +1,5 @@
-﻿using Knyaz.Optimus;
-using Knyaz.Optimus.Dom.Elements;
-using Knyaz.Optimus.ResourceProviders;
-using Knyaz.Optimus.WinForms;
-using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
-using Knyaz.Optimus.WinForms.Tools;
 
 namespace Prime.Controls
 {

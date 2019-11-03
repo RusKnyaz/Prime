@@ -1,4 +1,4 @@
-﻿namespace Knyaz.Optimus.WinForms
+﻿namespace Prime.HtmlView
 {
 	partial class HtmlDocumentView
 	{

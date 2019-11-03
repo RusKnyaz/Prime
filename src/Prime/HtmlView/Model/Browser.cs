@@ -5,19 +5,35 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Knyaz.Optimus;
 using Knyaz.Optimus.ResourceProviders;
-using Knyaz.Optimus.WinForms;
-using Knyaz.Optimus.WinForms.Annotations;
+using Knyaz.Optimus.ScriptExecuting.Jint;
+using Prime.Annotations;
+using Prime.HtmlView;
 
 namespace Prime.Model
 {
 	public class Browser : INotifyPropertyChanged
 	{
-		public Engine Engine = new Engine() { ComputedStylesEnabled = true};
-		private Exception _exception;
+		public Engine Engine ;
+
+		public Browser()
+		{
+			Engine = BuildEngine();
+			Engine.ComputedStylesEnabled = true;
+		}
+
+		private static Engine BuildEngine() => EngineBuilder.New().UseJint().Build();
+
+		private static Engine BuildEngine(string login, string password) =>
+			EngineBuilder.New()
+				.UseJint()
+				.SetResourceProvider(new ResourceProviderBuilder().Http(x => x.Basic(login, password)).UsePrediction().Build())
+				.Build();
+		
+		public Exception Exception { get; private set; }
 
 		public BrowserStates State
 		{
-			get { return _state; }
+			get => _state;
 			set
 			{
 				if (_state == value)
@@ -28,47 +44,47 @@ namespace Prime.Model
 			}
 		}
 
-		string Login;
-		string Password;
 		private BrowserStates _state;
 
 		public async Task OpenUrl(string value)
 		{
-			_exception = null;
+			var page = await OpenUrlInternal(value);
+			if (page is HttpPage httpPage && httpPage.HttpStatusCode == HttpStatusCode.Unauthorized)
+			{
+				// Ask for username and password
+				var credentials = OnAuthorize?.Invoke();
+				var login = credentials?.Item1;
+				var password = credentials?.Item2;
+				
+				if (!string.IsNullOrEmpty(login))
+				{
+					//Create new engine with specified authorization headers.
+					Engine = BuildEngine(login, password);
+					Engine.ComputedStylesEnabled = true;
+					
+					await OpenUrl(value);
+				}
+			}
+		}
 
+		private async Task<Page> OpenUrlInternal(string value)
+		{
+			State = BrowserStates.Loading;
 			try
 			{
-				State = BrowserStates.Loading;
 				var page = await Engine.OpenUrl(value);
 				State = BrowserStates.Ready;
-				if (page is HttpPage httpPage && httpPage.HttpStatusCode == HttpStatusCode.Unauthorized)
-				{
-					Authorize();
-					if (!string.IsNullOrEmpty(Login))
-					{
-						Engine = new Engine(new ResourceProviderBuilder().Http(x => x.Basic(Login, Password)).UsePrediction().Build())  { ComputedStylesEnabled = true};
-						State = BrowserStates.Loading;
-						await OpenUrl(value);
-						State = BrowserStates.Ready;
-					}
-					//pass login|password to the engine.
-				}
+				return page;
 			}
 			catch (Exception e)
 			{
-				_exception = e;
+				Exception = e;
 				State = BrowserStates.Error;
+				return null;
 			}
 		}
-		
-		public event Func<Tuple<string, string>> OnAuthorize;
 
-		private void Authorize()
-		{
-			var result = OnAuthorize?.Invoke();
-			Login = result?.Item1;
-			Password = result?.Item2;
-		}
+		public event Func<Tuple<string, string>> OnAuthorize;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

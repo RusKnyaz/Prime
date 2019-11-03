@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Knyaz.Optimus.WinForms
+namespace Prime.HtmlView
 {
     partial class HtmlUserControl
     {

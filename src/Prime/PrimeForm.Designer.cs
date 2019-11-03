@@ -36,7 +36,7 @@ namespace Prime
 			this.button1 = new System.Windows.Forms.Button();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-			this._browserControl = new Knyaz.Optimus.WinForms.BrowserControl();
+			this._browserControl = new Prime.HtmlView.BrowserControl();
 			this.panel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -111,7 +111,7 @@ namespace Prime
 			this._browserControl.Name = "_browserControl";
 			this._browserControl.Size = new System.Drawing.Size(924, 406);
 			this._browserControl.TabIndex = 1;
-			this._browserControl.NodeClick += new System.EventHandler<Knyaz.Optimus.WinForms.NodeEventArgs>(this._browserControl_NodeClick);
+			this._browserControl.NodeClick += new System.EventHandler<Prime.HtmlView.NodeEventArgs>(this._browserControl_NodeClick);
 			this._browserControl.StateChanged += new System.EventHandler(this._browserControl_StateChanged);
 			// 
 			// PrimeForm
@@ -137,7 +137,7 @@ namespace Prime
 		#endregion
 
 		private System.Windows.Forms.Panel panel1;
-		private BrowserControl _browserControl;
+		private Prime.HtmlView.BrowserControl _browserControl;
 		private System.Windows.Forms.TextBox _textBoxUrl;
 		private System.Windows.Forms.Button buttonGo;
 		private System.Windows.Forms.StatusStrip statusStrip1;

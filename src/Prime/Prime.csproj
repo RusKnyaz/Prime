@@ -134,7 +134,6 @@
     <Compile Include="HtmlView\HtmlUserControl.Designer.cs" />
     <Compile Include="HtmlView\Model\Browser.cs" />
     <Compile Include="HtmlView\OptimusGraphicsRenderer.cs" />
-    <Compile Include="HtmlView\Tools\StaticResourceProvider.cs" />
     <Compile Include="Model\DomInspector.cs" />
     <Compile Include="PrimeForm.cs">
       <SubType>Form</SubType>
@@ -182,6 +181,9 @@
     <Content Include="HtmlView\BrowserControl.resx" />
     <Content Include="HtmlView\HtmlDocumentView.resx" />
     <EmbeddedResource Include="Res\bootstrap.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HtmlView\Tools" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

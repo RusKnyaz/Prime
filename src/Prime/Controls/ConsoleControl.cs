@@ -3,7 +3,7 @@ using System.Net;
 using Knyaz.Optimus;
 using Knyaz.Optimus.Dom.Elements;
 using Knyaz.Optimus.ResourceProviders;
-using Knyaz.Optimus.WinForms;
+using Prime.HtmlView;
 
 namespace Prime.Controls
 {

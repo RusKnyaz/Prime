@@ -1,12 +1,16 @@
 using System;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Knyaz.Optimus;
 using Knyaz.Optimus.Dom;
-using Knyaz.Optimus.WinForms.Tools;
+using Knyaz.Optimus.ResourceProviders;
 
-namespace Knyaz.Optimus.WinForms
+namespace Prime.HtmlView
 {
     /// <summary>
-    /// Html base user control
+    /// The class used to create UI based on HTML markup. 
     /// </summary>
     public partial class HtmlUserControl : UserControl
     {
@@ -38,8 +42,9 @@ namespace Knyaz.Optimus.WinForms
         {
             Cursor = Cursors.WaitCursor;
 
-            var html = GetTemplate();
+            var html = GetTemplate(); // Get the user control html markup.
             
+            //Create engine with custom resource provider to load the template provided by HtmlUserControl inheritor.
             _engine = new Engine(new StaticResourceProvider(html))
                 { ComputedStylesEnabled = true };
 
@@ -61,5 +66,19 @@ namespace Knyaz.Optimus.WinForms
         protected virtual string GetTemplate() => "<html><body></body></html>";
 
         protected Document Document => _engine.Document;
+        
+        /// <summary>
+        /// The custom resource provider that always returns static content.
+        /// </summary>
+        internal class StaticResourceProvider : IResourceProvider
+        {
+	        public StaticResourceProvider(string data) =>
+		        Data = data;
+
+	        public string Data { get; }
+
+	        public Task<IResource> SendRequestAsync(Request request) =>
+		        Task.Run(() => (IResource)new Response("text/html", new MemoryStream(Encoding.UTF8.GetBytes(Data))));
+        }
     }
 }

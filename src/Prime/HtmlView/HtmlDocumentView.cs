@@ -3,8 +3,9 @@ using Knyaz.Optimus.Dom.Elements;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Knyaz.Optimus.WinForms;
 
-namespace Knyaz.Optimus.WinForms
+namespace Prime.HtmlView
 {
 	/// <summary>
 	/// Shows the HTML document represented by <see cref="Document"/>.

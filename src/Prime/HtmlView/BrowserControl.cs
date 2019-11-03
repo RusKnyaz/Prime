@@ -2,16 +2,15 @@ using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using Knyaz.Optimus;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.Model;
 
-namespace Knyaz.Optimus.WinForms
+namespace Prime.HtmlView
 {
     public partial class BrowserControl : UserControl
     {
-        private BrowserStates _state;
-
         public readonly Browser Browser = new Browser();
         public Engine Engine => Browser.Engine;
 
@@ -62,6 +61,8 @@ namespace Knyaz.Optimus.WinForms
 
         public BrowserStates State => Browser.State;
 
+        public Exception Exception => Browser.Exception;
+        
         public void SetHighlight(Rectangle rect)
         {
             //throw new NotImplementedException();

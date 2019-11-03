@@ -3,12 +3,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using Knyaz.Optimus.Dom.Elements;
-using Knyaz.Optimus.WinForms;
 using Prime.Controls;
 using Prime.DevTools;
 using Prime.Model;
 using Prime.Properties;
-using Knyaz.Optimus.TestingTools;
+using Prime.HtmlView;
 
 namespace Prime
 {
@@ -54,6 +53,11 @@ namespace Prime
 			_browserControl.Browser.OnAuthorize += Browser_OnAuthorize;
 			_browserControl.KeyDown += PrimeForm_KeyDown;
 			_textBoxUrl.KeyDown += PrimeForm_KeyDown;
+			toolStripStatusLabel1.Click += (sender, args) =>
+			{
+				if (_browserControl.State == BrowserStates.Error)
+					MessageBox.Show(_browserControl.Exception.ToString());
+			};
 		}
 
 
@@ -125,8 +129,20 @@ namespace Prime
 				toolStripStatusLabel1.Text = _browserControl.State == BrowserStates.None
 					? ""
 					: _browserControl.State == BrowserStates.Loading ? "Loading..."
-					: _browserControl.State == BrowserStates.Error ? "Error" : "Complete";
+					: _browserControl.State == BrowserStates.Error ? $"Error: {GetErrorMessage()}" : "Complete";
 			}
+		}
+
+		private string GetErrorMessage()
+		{
+			var msg = _browserControl.Exception.Message;
+			var idx = msg.IndexOfAny(new []{'\r', '\n'});
+			if (idx > 0)
+			{
+				msg = msg.Substring(0, idx);
+			}
+
+			return msg;
 		}
 
 		private void PrimeForm_KeyDown(object sender, KeyEventArgs e)

@@ -1,4 +1,4 @@
-﻿namespace Knyaz.Optimus.WinForms
+﻿namespace Prime.HtmlView
 {
 	partial class BrowserControl
 	{
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._documentView = new Knyaz.Optimus.WinForms.HtmlDocumentView();
+			this._documentView = new Prime.HtmlView.HtmlDocumentView();
 			this.SuspendLayout();
 			// 
 			// _documentView
