@@ -1,0 +1,12 @@
+*.dll
+bin/
+obj/
+*/packages
+**/.idea
+**/.nuget
+.vs
+*.orig
+*.sln.*
+*.csproj.*
+*/test-results
+*.suo
