@@ -5,5 +5,8 @@
     <Setting Name="Setting" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://localhost</Value>
     </Setting>
+    <Setting Name="JsEngine" Type="System.String" Scope="User">
+      <Value Profile="(Default)">JINT</Value>
+    </Setting>  
   </Settings>
 </SettingsFile>

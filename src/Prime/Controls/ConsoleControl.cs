@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
+using System.Text;
 using System.Text;
 using Knyaz.Optimus;
 using Knyaz.Optimus.Dom.Elements;
@@ -57,11 +59,8 @@ namespace Prime.Controls
             Document.Body.AppendChild(node);
         }
 
-        protected override string GetTemplate() =>
-            "<html><head><style>.error{color:red}</style></head><body></body></html>";
-
-        
-        #region .    IConsole    .
+        //protected override Stream GetTemplate() => new MemoryStream(Encoding.UTF8.GetBytes("<html><head><style>.error{color:red}</style></head><body></body></html>"));
+	#region .    IConsole    .
 
         private static string FormatMessage(string format, object[] objs)
         {

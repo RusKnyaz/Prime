@@ -2,6 +2,7 @@
 using Knyaz.Optimus.Dom.Elements;
 using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Knyaz.Optimus.WinForms;
 
@@ -89,27 +90,44 @@ namespace Prime.HtmlView
 			});
 		}
 
-		private void _updateTimer_Tick(object sender, EventArgs e)
+		private async void _updateTimer_Tick(object sender, EventArgs e)
 		{
 			var doc = Document;
 			if (_renderer != null && _renderer.IsDirty && doc != null)
 			{
-				Relayout();
+				await Relayout();
 			}
 		}
 
-		protected override void OnResize(EventArgs e)
+		protected override async void OnResize(EventArgs e)
 		{
 			if (_renderer != null)
-				Relayout();
+				await Relayout();
+			//todo: Engine.CurrentMedia properties have to be updated
 		}
 
-		private void Relayout()
+		private bool _rendering = false;
+		private async Task Relayout()
 		{
+			if (_rendering)
+				return;
+			
 			var cr = ClientRectangle;
-			var sz = _renderer.Relayout(cr);
-			if (!sz.IsEmpty)
-				panel1.Size = new Size(Math.Max(sz.Width, cr.Width), Math.Max(sz.Height, cr.Height));
+			var oldCursor = Cursor;
+			Cursor = Cursors.WaitCursor;
+			try
+			{
+				_rendering = true;
+				var sz = await Task.Run(() => _renderer.Relayout(cr));
+				if (!sz.IsEmpty)
+					panel1.Size = new Size(Math.Max(sz.Width, cr.Width), Math.Max(sz.Height, cr.Height));
+			}
+			finally
+			{
+				_rendering = false;
+				Cursor = oldCursor;	
+			}
+
 			panel1.Invalidate();
 		}
 
@@ -137,13 +155,7 @@ namespace Prime.HtmlView
 
 			try
 			{
-				if (renderer.IsDirty)
-				{
-					Relayout();
-					return;
-				}
-				
-				renderer.Render(e.Graphics, ClientRectangle);
+				renderer.Render(e.Graphics);
 				
 				if (!_highlight.IsEmpty)
 				{
@@ -156,7 +168,7 @@ namespace Prime.HtmlView
 			}
 			catch (Exception ex)
 			{
-
+				_exception = ex;
 			}
 		}
 
@@ -169,6 +181,16 @@ namespace Prime.HtmlView
 				panel1.Invalidate(old);
 			if (!_highlight.IsEmpty)
 				panel1.Invalidate(_highlight);
+		}
+	}
+	
+	public class NodeEventArgs : EventArgs
+	{
+		public readonly Node Node;
+
+		public NodeEventArgs(Node node)
+		{
+			Node = node;
 		}
 	}
 }

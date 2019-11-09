@@ -34,5 +34,17 @@ namespace Prime.Properties {
                 this["Setting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("JINT")]
+        public string JsEngine {
+	        get {
+		        return ((string)(this["JsEngine"]));
+	        }
+	        set {
+		        this["JsEngine"] = value;
+	        }
+        }
     }
 }

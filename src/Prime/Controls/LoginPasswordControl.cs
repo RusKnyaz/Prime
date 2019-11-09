@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.HtmlView;
@@ -14,31 +13,9 @@ namespace Prime.Controls
         public LoginPasswordControl()
         {
             InitializeComponent();
+            AddResource("Prime.Res.bootstrap.min.css", "text/css", () => typeof(LoginPasswordForm).Assembly.GetManifestResourceStream("Prime.Res.bootstrap.min.css"));
         }
         
-        string Bootstrap () 
-        {
-            using (var reader = new StreamReader(typeof(LoginPasswordForm).Assembly.GetManifestResourceStream("Prime.Res.bootstrap.min.css")))
-                return reader.ReadToEnd();
-        }
-
-        protected override string GetTemplate() =>
-	        "<!DOCTYPE html><html><head><style>" + Bootstrap() + "</style></head><body>" +
-	        "<div class=container>" +
-	        "<h2>Please enter your login and password</h2>" +
-	        "<div class='form-group'>" +
-	        "<label for=username>User name</label>" +
-	        "<input type=text id=username class='form-control'/><br/>" +
-	        "</div>" +
-	        "<div class='form-group'>" +
-	        "<label for=password>Password</label>" +
-	        "<input type=password id=password class='form-control'/><br/>" +
-	        "</div>" +
-	        "<button id=ok class='btn btn-primary'>OK</button>" +
-	        "<button id=cancel class='btn btn-secondary'>Cancel</button>" +
-	        "</div>" +
-	        "</body></html>";
-
         protected override void OnInitDocument(Document document)
         {
 	        //add interactivity to the HTML.

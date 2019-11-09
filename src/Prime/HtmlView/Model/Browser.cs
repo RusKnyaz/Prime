@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -7,6 +7,7 @@ using Knyaz.Optimus;
 using Knyaz.Optimus.Dom.Interfaces;
 using Knyaz.Optimus.ResourceProviders;
 using Knyaz.Optimus.ScriptExecuting.Jint;
+using Knyaz.Optimus.Scripting.Jurassic;
 using Prime.Annotations;
 using Prime.HtmlView;
 
@@ -22,15 +23,27 @@ namespace Prime.Model
 		{
 			_console = console;
 			Engine = BuildEngine();
-			Engine.ComputedStylesEnabled = true;
 		}
 
-		private Engine BuildEngine() => EngineBuilder.New().Window(w => w.SetConsole(_console)).UseJint().Build();
+		private EngineBuilder ConfigureBuilder()
+		{
+			var builder = EngineBuilder.New().EnableCss();
+			switch (Properties.Settings.Default.JsEngine)
+			{
+				case "JINT": builder.UseJint();break;
+				case "JURASSIC" : builder.UseJurassic();break;
+			}
+
+			builder.Window(w => w.SetConsole(_console));
+
+			return builder;
+		}
+		
+
+		private Engine BuildEngine() => ConfigureBuilder().Build();
 
 		private Engine BuildEngine(string login, string password) =>
-			EngineBuilder.New()
-				.UseJint()
-				.Window(w => w.SetConsole(_console))
+			ConfigureBuilder()
 				.SetResourceProvider(new ResourceProviderBuilder().Http(x => x.Basic(login, password)).UsePrediction().Build())
 				.Build();
 		
@@ -98,5 +111,22 @@ namespace Prime.Model
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+	}
+	
+	public enum BrowserStates
+	{
+		/// <summary>
+		/// No document available
+		/// </summary>
+		None,
+		/// <summary>
+		/// Document is ready
+		/// </summary>
+		Ready,
+		/// <summary>
+		/// There are resources to load.
+		/// </summary>
+		Loading,
+		Error
 	}
 }

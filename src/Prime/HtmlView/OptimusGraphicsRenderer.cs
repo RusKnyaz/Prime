@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,6 +8,7 @@ using Knyaz.Optimus.Dom.Elements;
 using Knyaz.Optimus.Graphics;
 using Knyaz.Optimus.Graphics.Layout;
 using Microsoft.FSharp.Core;
+using HtmlElement = Knyaz.Optimus.Dom.Elements.HtmlElement;
 
 
 namespace Knyaz.Optimus.WinForms
@@ -32,14 +34,13 @@ namespace Knyaz.Optimus.WinForms
 			_document = null;
 		}
 
-		public bool IsDirty { get { return _isDocumentDirty; } }
+		public bool IsDirty => _isDocumentDirty;
 
 		private void OnNodeRemoved(Node arg1, Node arg2) => _isDocumentDirty = true;
 
 		void OnNodeInserted(Node obj) => _isDocumentDirty = true;
 
 		private RectangleF _lastBounds;
-        private FSharpFunc<Size, IEnumerable<Tuple<Rectangle, Types.RenderItem>>> _lfun;
         private IEnumerable<Tuple<Rectangle, Types.RenderItem>> _layout;
 
 		public Size GetSize()
@@ -80,15 +81,16 @@ namespace Knyaz.Optimus.WinForms
 		}
 		
 		//todo: dispose fonts
-		static Dictionary<Types.FontInfo, Font> _fonts = new Dictionary<Types.FontInfo, Font>();
+		
+		static ConcurrentDictionary<Types.FontInfo, Font> _fonts = new ConcurrentDictionary<Types.FontInfo, Font>();
 
-		static private Font GetFont(Types.FontInfo fontInfo)
+		private static Font GetFont(Types.FontInfo fontInfo)
 		{
 			if (_fonts.TryGetValue(fontInfo, out var font))
 				return font;
 
 			font = new Font(fontInfo.Name, fontInfo.Size, fontInfo.Style);
-			_fonts.Add(fontInfo, font);
+			_fonts.TryAdd(fontInfo, font);
 			return font;
 		}
 
@@ -96,34 +98,49 @@ namespace Knyaz.Optimus.WinForms
 			FSharpFunc<Types.FontInfo, FSharpFunc<string, Size>>.FromConverter(input =>
 				FSharpFunc<string, Size>.FromConverter(s => MeasureString(input, s))
 			);
-			
 
+
+		private bool _layoutInProgress = false;
+		
 		public Size Relayout(RectangleF bounds)
 		{
-			if (_document != null && _document.Body != null)
+			if (_document?.Body != null)
 			{
 				if (_document.ReadyState != "complete")
 					return Size.Empty;
 
-                if (_isDocumentDirty || _layout == null)
+                if (_isDocumentDirty || _lastBounds != bounds || _layout == null)
                 {
-                    _lfun = OptimusLayout.Layout(new Types.LayoutSettings(true, FSharpMeasureString), _document.Body);
-                }
-
-                if(_isDocumentDirty || _lastBounds != bounds || _layout == null)
-                { 
-                    _layout = _lfun.Invoke(bounds.Size.ToSize()).ToList();
+	                _isDocumentDirty = false;
+	                _layoutInProgress = true;
+	                try
+	                {
+		                var lfun = OptimusLayout.Layout(new Types.LayoutSettings(true, FSharpMeasureString),
+			                _document.Body);
+		                _layout = lfun.Invoke(bounds.Size.ToSize()).ToList();
+	                }
+	                finally
+	                {
+		                _layoutInProgress = false;    
+	                }
 					_lastBounds = bounds;
-					_isDocumentDirty = false;
 				}
 			}
 
 			return GetSize();
 		}
 
-		public void Render(System.Drawing.Graphics graphics, RectangleF bounds)
+		public void Render(System.Drawing.Graphics graphics)
 		{
-			var sz = Relayout(bounds);
+			if (_layoutInProgress)
+			{
+				using(var font = new Font("Arial", 16))
+				using(var brush = new SolidBrush(Color.Khaki))
+					graphics.DrawString("Processing...", font , brush, 10,10);
+				return;
+			}
+			
+			var sz = GetSize();
 			if (!sz.IsEmpty)
 			{
 				graphics.PageUnit = GraphicsUnit.Pixel;
@@ -143,7 +160,7 @@ namespace Knyaz.Optimus.WinForms
 
 					if (t.Item2 is Types.RenderItem.Element qwe)
 					{
-						elt = qwe.Item.Node as HtmlElement;
+						elt = qwe.Item.Node;
 					}
 					else if(t.Item2 is Types.RenderItem.Text text)
 					{

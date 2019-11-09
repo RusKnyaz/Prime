@@ -126,6 +126,7 @@
     <Compile Include="Controls\LoginPasswordForm.Designer.cs">
       <DependentUpon>LoginPasswordForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SettingsControl.cs" />
     <Compile Include="DevTools\ComputedStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -142,8 +143,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DevTools\LayoutInfoControl.Designer.cs" />
-    <Compile Include="HtmlView\BrowserControl.cs" />
-    <Compile Include="HtmlView\BrowserControl.Designer.cs" />
     <Compile Include="HtmlView\HtmlDocumentView.cs" />
     <Compile Include="HtmlView\HtmlDocumentView.Designer.cs" />
     <Compile Include="HtmlView\HtmlUserControl.cs" />
@@ -191,11 +190,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\SettingsControl.html">
+      <DependentUpon>SettingsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LoginPasswordControl.html">
+      <DependentUpon>LoginPasswordControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ConsoleControl.html">
+      <DependentUpon>ConsoleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <Content Include="DevTools\ComputedStyleControl.resx" />
     <Content Include="DevTools\DevToolControl.resx" />
     <Content Include="DevTools\DomTreeControl.resx" />
     <Content Include="DevTools\LayoutInfoControl.resx" />
-    <Content Include="HtmlView\BrowserControl.resx" />
     <Content Include="HtmlView\HtmlDocumentView.resx" />
     <EmbeddedResource Include="Res\bootstrap.min.css" />
   </ItemGroup>

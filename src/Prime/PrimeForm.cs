@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.Controls;
@@ -13,11 +14,11 @@ namespace Prime
 {
 	public partial class PrimeForm : Form
 	{
-		private Prime.HtmlView.BrowserControl _browserControl;
+		private HtmlDocumentView _documentView;
 		Lazy<Form> _domInspectorForm;
 		Lazy<Form> _consoleForm;
 		private DevToolControl _devToolControl;
-		private DomTreeControl _domTreeControl { get { return _devToolControl.DomTreeControl; } }
+		private DomTreeControl _domTreeControl => _devToolControl.DomTreeControl;
 
 		private readonly Browser Browser;
 
@@ -26,10 +27,17 @@ namespace Prime
 			var consoleControl = new ConsoleControl();
 			
 			Browser = new Browser(consoleControl);
+			Browser.OnAuthorize += Browser_OnAuthorize;
+			Browser.PropertyChanged += (sender, args) =>
+			{
+				if (args.PropertyName == "State")
+					_browserControl_StateChanged(this, EventArgs.Empty);
+			};
+
 			
 			_domInspectorForm = new Lazy<Form>(() =>
 			{
-				_devToolControl = new DevToolControl(_browserControl.GetRect) {Engine = Browser.Engine};
+				_devToolControl = new DevToolControl(_documentView.GetRect) {Engine = Browser.Engine};
 
 				_domTreeControl.NodeSelected += _domTreeControl_NodeSelected;
 
@@ -42,7 +50,6 @@ namespace Prime
 				return frm;
 			});
 
-			
 			
 			_consoleForm = new Lazy<Form>(() =>
 			{
@@ -61,29 +68,37 @@ namespace Prime
 			// _browserControl
 			// 
 			
-			_browserControl = new BrowserControl(Browser);
-			_browserControl.AutoScroll = true;
-			_browserControl.BackColor = System.Drawing.Color.White;
-			_browserControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			_browserControl.Location = new System.Drawing.Point(0, 29);
-			_browserControl.Margin = new System.Windows.Forms.Padding(4);
-			_browserControl.Name = "_browserControl";
-			_browserControl.Size = new System.Drawing.Size(924, 406);
-			_browserControl.TabIndex = 1;
-			_browserControl.NodeClick += new System.EventHandler<Prime.HtmlView.NodeEventArgs>(this._browserControl_NodeClick);
-			_browserControl.StateChanged += new System.EventHandler(this._browserControl_StateChanged);
-			_browserControl.Browser.OnAuthorize += Browser_OnAuthorize;
-			_browserControl.KeyDown += PrimeForm_KeyDown;
-			Controls.Add(this._browserControl);
+			InitDocumentView();
 
-			
-			
+
 			_textBoxUrl.KeyDown += PrimeForm_KeyDown;
 			toolStripStatusLabel1.Click += (sender, args) =>
 			{
-				if (_browserControl.State == BrowserStates.Error)
-					MessageBox.Show(_browserControl.Exception.ToString());
+				if (Browser.State == BrowserStates.Error)
+					MessageBox.Show(Browser.Exception.ToString());
 			};
+		}
+
+		private void InitDocumentView()
+		{
+			_documentView = new HtmlDocumentView();
+			_documentView.AutoScroll = true;
+			_documentView.BackColor = System.Drawing.Color.White;
+			_documentView.Dock = System.Windows.Forms.DockStyle.Fill;
+			_documentView.Location = new System.Drawing.Point(0, 29);
+			_documentView.Margin = new System.Windows.Forms.Padding(4);
+			_documentView.Name = "_browserControl";
+			_documentView.Size = new System.Drawing.Size(924, 406);
+			_documentView.TabIndex = 1;
+			_documentView.KeyDown += PrimeForm_KeyDown;
+			Controls.Add(this._documentView);
+			_documentView.BringToFront();
+			_documentView.SizeChanged += (sender, args) => {
+				var rect = ClientRectangle;
+				Browser.Engine.CurrentMedia.Width = rect.Width;
+				Browser.Engine.CurrentMedia.Landscape = rect.Width > rect.Height;
+			};
+			_documentView.NodeClick += _browserControl_NodeClick;
 		}
 
 
@@ -129,8 +144,8 @@ namespace Prime
 			var node = obj.Tag as Node;
 			if (node != null)
 			{
-				var rect = _browserControl.GetRect(node);
-				_browserControl.SetHighlight(rect);
+				var rect = _documentView.GetRect(node);
+				//_browserControl.SetHighlight(rect);
 			}
 		}
 
@@ -140,9 +155,24 @@ namespace Prime
 			base.OnClosing(e);
 		}
 
-		private void buttonGo_Click(object sender, EventArgs e)
+		private void buttonGo_Click(object sender, EventArgs e) => GoTo(_textBoxUrl.Text);
+
+		private void GoTo(string url)
 		{
-			_browserControl.Url = _textBoxUrl.Text;
+			Task.Run(async () => {
+				await Browser.OpenUrl(url);
+				_documentView.Document = Browser.Engine.Document;
+			});
+		}
+		
+		private void ButtonSettingsClick(object sender, EventArgs e)
+		{
+			//todo: open settings form;
+			var form = new Form();
+			var settingsControl = new SettingsControl();
+			settingsControl.Dock = DockStyle.Fill;
+			form.Controls.Add(settingsControl);
+			form.ShowDialog(this);
 		}
 
 
@@ -152,16 +182,16 @@ namespace Prime
 				BeginInvoke((Action)(() => _browserControl_StateChanged(sender, e)));
 			else
 			{
-				toolStripStatusLabel1.Text = _browserControl.State == BrowserStates.None
+				toolStripStatusLabel1.Text = Browser.State == BrowserStates.None
 					? ""
-					: _browserControl.State == BrowserStates.Loading ? "Loading..."
-					: _browserControl.State == BrowserStates.Error ? $"Error: {GetErrorMessage()}" : "Complete";
+					: Browser.State == BrowserStates.Loading ? "Loading..."
+					: Browser.State == BrowserStates.Error ? $"Error: {GetErrorMessage()}" : "Complete";
 			}
 		}
 
 		private string GetErrorMessage()
 		{
-			var msg = _browserControl.Exception.Message;
+			var msg = Browser.Exception.Message;
 			var idx = msg.IndexOfAny(new []{'\r', '\n'});
 			if (idx > 0)
 			{
@@ -175,7 +205,7 @@ namespace Prime
 		{
 			if (e.KeyCode == Keys.Enter && _textBoxUrl.Focused)
 			{
-				_browserControl.Url = _textBoxUrl.Text;
+				GoTo(_textBoxUrl.Text);
 				e.Handled = true;
 				return;
 			}

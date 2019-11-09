@@ -1,4 +1,5 @@
-﻿using Knyaz.Optimus.WinForms;
+﻿using System.Windows.Forms;
+using Knyaz.Optimus.WinForms;
 
 namespace Prime
 {
@@ -33,6 +34,7 @@ namespace Prime
 			this.panel1 = new System.Windows.Forms.Panel();
 			this._textBoxUrl = new System.Windows.Forms.TextBox();
 			this.buttonGo = new System.Windows.Forms.Button();
+			this.buttonSettings = new System.Windows.Forms.Button();
 			this.button1 = new System.Windows.Forms.Button();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -45,6 +47,7 @@ namespace Prime
 			this.panel1.Controls.Add(this._textBoxUrl);
 			this.panel1.Controls.Add(this.buttonGo);
 			this.panel1.Controls.Add(this.button1);
+			this.panel1.Controls.Add(this.buttonSettings);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.panel1.Location = new System.Drawing.Point(0, 0);
 			this.panel1.Name = "panel1";
@@ -60,6 +63,7 @@ namespace Prime
 			this._textBoxUrl.Size = new System.Drawing.Size(799, 20);
 			this._textBoxUrl.TabIndex = 0;
 			this._textBoxUrl.Text = global::Prime.Properties.Settings.Default.Setting;
+			this._textBoxUrl.Dock = DockStyle.Fill;
 			// 
 			// buttonGo
 			// 
@@ -70,6 +74,7 @@ namespace Prime
 			this.buttonGo.TabIndex = 1;
 			this.buttonGo.Text = "Go";
 			this.buttonGo.UseVisualStyleBackColor = true;
+			this.buttonGo.Dock = DockStyle.Right;
 			this.buttonGo.Click += new System.EventHandler(this.buttonGo_Click);
 			// 
 			// button1
@@ -81,7 +86,18 @@ namespace Prime
 			this.button1.TabIndex = 2;
 			this.button1.Text = "inspect";
 			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Dock = DockStyle.Right;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
+			//
+			// buttonSettings
+			// 
+			this.buttonSettings.Dock = System.Windows.Forms.DockStyle.Right;
+			this.buttonSettings.Name = "buttonGo";
+			this.buttonSettings.TabIndex = 1;
+			this.buttonSettings.Text = "Settings";
+			this.buttonSettings.UseVisualStyleBackColor = true;
+			this.buttonSettings.Dock = DockStyle.Right;
+			this.buttonSettings.Click += new System.EventHandler(this.ButtonSettingsClick);
 			// 
 			// statusStrip1
 			// 
@@ -124,6 +140,7 @@ namespace Prime
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.TextBox _textBoxUrl;
 		private System.Windows.Forms.Button buttonGo;
+		private System.Windows.Forms.Button buttonSettings;
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
 		private System.Windows.Forms.Button button1;
