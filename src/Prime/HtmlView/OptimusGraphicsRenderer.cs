@@ -5,6 +5,7 @@ using System.Linq;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Knyaz.Optimus.Graphics;
+using Knyaz.Optimus.Graphics.Layout;
 using Microsoft.FSharp.Core;
 
 
@@ -38,8 +39,8 @@ namespace Knyaz.Optimus.WinForms
 		void OnNodeInserted(Node obj) => _isDocumentDirty = true;
 
 		private RectangleF _lastBounds;
-        private FSharpFunc<int, IEnumerable<Tuple<Rectangle, Layout.RenderItem>>> _lfun;
-        private IEnumerable<Tuple<Rectangle, Layout.RenderItem>> _layout;
+        private FSharpFunc<Size, IEnumerable<Tuple<Rectangle, Types.RenderItem>>> _lfun;
+        private IEnumerable<Tuple<Rectangle, Types.RenderItem>> _layout;
 
 		public Size GetSize()
 		{
@@ -56,9 +57,9 @@ namespace Knyaz.Optimus.WinForms
 			return new Size(width, height);
 		}
 
-		static Size MeasureString(Layout.FontInfo fontInfo, string text)
+		static Size MeasureString(Types.FontInfo fontInfo, string text)
 		{
-			var key = new Tuple<Layout.FontInfo, string>(fontInfo, text);
+			var key = new Tuple<Types.FontInfo, string>(fontInfo, text);
 			if (_measureResults.TryGetValue(key, out var result))
 				return result;
 			
@@ -69,8 +70,8 @@ namespace Knyaz.Optimus.WinForms
 			return result;
 		}
 		
-		static Dictionary<Tuple<Layout.FontInfo,string>, Size> _measureResults = 
-			new Dictionary<Tuple<Layout.FontInfo, string>, Size>(new TupleComparer<Layout.FontInfo, string>());
+		static Dictionary<Tuple<Types.FontInfo,string>, Size> _measureResults = 
+			new Dictionary<Tuple<Types.FontInfo, string>, Size>(new TupleComparer<Types.FontInfo, string>());
 
 		class TupleComparer<T1, T2> : IEqualityComparer<Tuple<T1, T2>>
 		{
@@ -79,9 +80,9 @@ namespace Knyaz.Optimus.WinForms
 		}
 		
 		//todo: dispose fonts
-		static Dictionary<Layout.FontInfo, Font> _fonts = new Dictionary<Layout.FontInfo, Font>();
+		static Dictionary<Types.FontInfo, Font> _fonts = new Dictionary<Types.FontInfo, Font>();
 
-		static private Font GetFont(Layout.FontInfo fontInfo)
+		static private Font GetFont(Types.FontInfo fontInfo)
 		{
 			if (_fonts.TryGetValue(fontInfo, out var font))
 				return font;
@@ -91,8 +92,8 @@ namespace Knyaz.Optimus.WinForms
 			return font;
 		}
 
-		private FSharpFunc<Layout.FontInfo, FSharpFunc<string, Size>> FSharpMeasureString =
-			FSharpFunc<Layout.FontInfo, FSharpFunc<string, Size>>.FromConverter(input =>
+		private FSharpFunc<Types.FontInfo, FSharpFunc<string, Size>> FSharpMeasureString =
+			FSharpFunc<Types.FontInfo, FSharpFunc<string, Size>>.FromConverter(input =>
 				FSharpFunc<string, Size>.FromConverter(s => MeasureString(input, s))
 			);
 			
@@ -106,12 +107,12 @@ namespace Knyaz.Optimus.WinForms
 
                 if (_isDocumentDirty || _layout == null)
                 {
-                    _lfun = OptimusLayout.Layout(new Layout.LayoutSettings(true, FSharpMeasureString), _document.Body);
+                    _lfun = OptimusLayout.Layout(new Types.LayoutSettings(true, FSharpMeasureString), _document.Body);
                 }
 
                 if(_isDocumentDirty || _lastBounds != bounds || _layout == null)
                 { 
-                    _layout = _lfun.Invoke((int)bounds.Right).ToList();
+                    _layout = _lfun.Invoke(bounds.Size.ToSize()).ToList();
 					_lastBounds = bounds;
 					_isDocumentDirty = false;
 				}
@@ -135,23 +136,18 @@ namespace Knyaz.Optimus.WinForms
 			if (_layout == null)
 				return;
 			
-			OptimusRenderer.HitTest(_layout, x, y, FSharpFunc<Tuple<Rectangle, Layout.RenderItem>, bool>.FromConverter(
+			OptimusRenderer.HitTest(_layout, x, y, FSharpFunc<Tuple<Rectangle, Types.RenderItem>, bool>.FromConverter(
 				t =>
 				{
 					HtmlElement elt = null;
 
-					var qwe = t.Item2 as Layout.RenderItem.Element;
-					
-
-					if (qwe != null)
+					if (t.Item2 is Types.RenderItem.Element qwe)
 					{
 						elt = qwe.Item.Node as HtmlElement;
 					}
-					else
+					else if(t.Item2 is Types.RenderItem.Text text)
 					{
-						var text = t.Item2 as Layout.RenderItem.Text;
-						if(text != null)
-							elt = text.Item.Node.ParentNode as HtmlElement;
+						elt = text.Item.Node.ParentNode as HtmlElement;
 					}
 
 					if (elt != null)
@@ -167,9 +163,9 @@ namespace Knyaz.Optimus.WinForms
 				}));
 		}
 
-		public Tuple<Rectangle, Layout.RenderItem> FindArea(Node node)
+		public Tuple<Rectangle, Types.RenderItem> FindArea(Node node)
 		{
-			return _layout? .FirstOrDefault(x => x?.Item2 is Layout.RenderItem.Element renderItem && renderItem.Item.Node == node);
+			return _layout? .FirstOrDefault(x => x?.Item2 is Types.RenderItem.Element renderItem && renderItem.Item.Node == node);
 		}
 	}
 }
