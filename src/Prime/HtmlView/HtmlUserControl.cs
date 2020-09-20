@@ -45,9 +45,12 @@ namespace Prime.HtmlView
             var html = GetTemplate(); // Get the user control html markup.
             
             //Create engine with custom resource provider to load the template provided by HtmlUserControl inheritor.
-            _engine = new Engine(new StaticResourceProvider(html))
-                { ComputedStylesEnabled = true };
 
+            _engine = EngineBuilder.New()
+	            .EnableCss()
+	            .SetResourceProvider(new StaticResourceProvider(html))
+	            .Build();
+            
             var rect = ClientRectangle;
             _engine.CurrentMedia.Width = rect.Width;
             _engine.CurrentMedia.Landscape = rect.Width > rect.Height;

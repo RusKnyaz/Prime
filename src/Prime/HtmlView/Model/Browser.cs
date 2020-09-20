@@ -4,6 +4,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Knyaz.Optimus;
+using Knyaz.Optimus.Dom.Interfaces;
 using Knyaz.Optimus.ResourceProviders;
 using Knyaz.Optimus.ScriptExecuting.Jint;
 using Prime.Annotations;
@@ -11,21 +12,25 @@ using Prime.HtmlView;
 
 namespace Prime.Model
 {
+	/// <summary> Browser model </summary>
 	public class Browser : INotifyPropertyChanged
 	{
+		private readonly IConsole _console;
 		public Engine Engine ;
 
-		public Browser()
+		public Browser(IConsole console)
 		{
+			_console = console;
 			Engine = BuildEngine();
 			Engine.ComputedStylesEnabled = true;
 		}
 
-		private static Engine BuildEngine() => EngineBuilder.New().UseJint().Build();
+		private Engine BuildEngine() => EngineBuilder.New().Window(w => w.SetConsole(_console)).UseJint().Build();
 
-		private static Engine BuildEngine(string login, string password) =>
+		private Engine BuildEngine(string login, string password) =>
 			EngineBuilder.New()
 				.UseJint()
+				.Window(w => w.SetConsole(_console))
 				.SetResourceProvider(new ResourceProviderBuilder().Http(x => x.Basic(login, password)).UsePrediction().Build())
 				.Build();
 		

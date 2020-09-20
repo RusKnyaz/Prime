@@ -7,6 +7,7 @@ using Knyaz.Optimus;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.Model;
+using Prime.Tools;
 using HtmlElement = Knyaz.Optimus.Dom.Elements.HtmlElement;
 
 namespace Prime.DevTools
@@ -106,7 +107,8 @@ namespace Prime.DevTools
 					if (newTreeNode != null)
 					{
 						var idx = child.ParentNode.ChildNodes.IndexOf(child);
-						targetTreeNodeCollection.Insert(idx, newTreeNode);
+						if(idx >= 0)
+							targetTreeNodeCollection.Insert(idx, newTreeNode);
 					}
 				});
 		}

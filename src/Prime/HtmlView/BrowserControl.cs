@@ -11,11 +11,12 @@ namespace Prime.HtmlView
 {
     public partial class BrowserControl : UserControl
     {
-        public readonly Browser Browser = new Browser();
-        public Engine Engine => Browser.Engine;
+        public readonly Browser Browser;
+        private Engine Engine => Browser.Engine;
 
-        public BrowserControl()
+        public BrowserControl(Browser browser)
         {
+	        Browser = browser;
             InitializeComponent();
             _documentView.AutoScroll = true;
             Engine.DocumentChanged += Engine_DocumentChanged;

@@ -13,16 +13,23 @@ namespace Prime
 {
 	public partial class PrimeForm : Form
 	{
+		private Prime.HtmlView.BrowserControl _browserControl;
 		Lazy<Form> _domInspectorForm;
 		Lazy<Form> _consoleForm;
 		private DevToolControl _devToolControl;
 		private DomTreeControl _domTreeControl { get { return _devToolControl.DomTreeControl; } }
 
+		private readonly Browser Browser;
+
 		public PrimeForm()
 		{
+			var consoleControl = new ConsoleControl();
+			
+			Browser = new Browser(consoleControl);
+			
 			_domInspectorForm = new Lazy<Form>(() =>
 			{
-				_devToolControl = new DevToolControl(_browserControl.GetRect) {Engine = _browserControl.Engine};
+				_devToolControl = new DevToolControl(_browserControl.GetRect) {Engine = Browser.Engine};
 
 				_domTreeControl.NodeSelected += _domTreeControl_NodeSelected;
 
@@ -34,11 +41,11 @@ namespace Prime
 				};
 				return frm;
 			});
+
+			
 			
 			_consoleForm = new Lazy<Form>(() =>
 			{
-				var consoleControl = new ConsoleControl(_browserControl.Engine);
-
 				var frm = consoleControl.PopupForm(); 
 				frm.FormClosing += (sender, args) =>
 				{
@@ -49,9 +56,28 @@ namespace Prime
 			});
 
 			InitializeComponent();
-
+			
+			// 
+			// _browserControl
+			// 
+			
+			_browserControl = new BrowserControl(Browser);
+			_browserControl.AutoScroll = true;
+			_browserControl.BackColor = System.Drawing.Color.White;
+			_browserControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			_browserControl.Location = new System.Drawing.Point(0, 29);
+			_browserControl.Margin = new System.Windows.Forms.Padding(4);
+			_browserControl.Name = "_browserControl";
+			_browserControl.Size = new System.Drawing.Size(924, 406);
+			_browserControl.TabIndex = 1;
+			_browserControl.NodeClick += new System.EventHandler<Prime.HtmlView.NodeEventArgs>(this._browserControl_NodeClick);
+			_browserControl.StateChanged += new System.EventHandler(this._browserControl_StateChanged);
 			_browserControl.Browser.OnAuthorize += Browser_OnAuthorize;
 			_browserControl.KeyDown += PrimeForm_KeyDown;
+			Controls.Add(this._browserControl);
+
+			
+			
 			_textBoxUrl.KeyDown += PrimeForm_KeyDown;
 			toolStripStatusLabel1.Click += (sender, args) =>
 			{
@@ -156,7 +182,7 @@ namespace Prime
 
 			if (e.KeyCode == Keys.F12 && e.Shift)
 			{
-				if (_browserControl.Engine == null)
+				if (Browser.Engine == null)
 					return;
 				
 				if (_consoleForm.Value.Visible)
@@ -167,7 +193,7 @@ namespace Prime
 			else
 			if (e.KeyCode == Keys.F12)
 			{
-				if (_browserControl.Engine == null)
+				if (Browser.Engine == null)
 					return;
 				
 				if (_domInspectorForm.Value.Visible)

@@ -36,7 +36,6 @@ namespace Prime
 			this.button1 = new System.Windows.Forms.Button();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-			this._browserControl = new Prime.HtmlView.BrowserControl();
 			this.panel1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -101,25 +100,11 @@ namespace Prime
 			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
 			this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
 			// 
-			// _browserControl
-			// 
-			this._browserControl.AutoScroll = true;
-			this._browserControl.BackColor = System.Drawing.Color.White;
-			this._browserControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._browserControl.Location = new System.Drawing.Point(0, 29);
-			this._browserControl.Margin = new System.Windows.Forms.Padding(4);
-			this._browserControl.Name = "_browserControl";
-			this._browserControl.Size = new System.Drawing.Size(924, 406);
-			this._browserControl.TabIndex = 1;
-			this._browserControl.NodeClick += new System.EventHandler<Prime.HtmlView.NodeEventArgs>(this._browserControl_NodeClick);
-			this._browserControl.StateChanged += new System.EventHandler(this._browserControl_StateChanged);
-			// 
 			// PrimeForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(924, 457);
-			this.Controls.Add(this._browserControl);
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.statusStrip1);
 			this.Name = "PrimeForm";
@@ -137,7 +122,6 @@ namespace Prime
 		#endregion
 
 		private System.Windows.Forms.Panel panel1;
-		private Prime.HtmlView.BrowserControl _browserControl;
 		private System.Windows.Forms.TextBox _textBoxUrl;
 		private System.Windows.Forms.Button buttonGo;
 		private System.Windows.Forms.StatusStrip statusStrip1;
