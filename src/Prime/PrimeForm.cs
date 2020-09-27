@@ -94,13 +94,13 @@ namespace Prime
 			Controls.Add(this._documentView);
 			_documentView.BringToFront();
 			_documentView.SizeChanged += (sender, args) => {
-				var rect = ClientRectangle;
+				var rect = _documentView.ClientRectangle;
 				Browser.Engine.CurrentMedia.Width = rect.Width;
 				Browser.Engine.CurrentMedia.Landscape = rect.Width > rect.Height;
 			};
+			
 			_documentView.NodeClick += _browserControl_NodeClick;
 		}
-
 
 		private Tuple<string, string> Browser_OnAuthorize()
 		{

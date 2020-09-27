@@ -93,7 +93,7 @@ namespace Prime.HtmlView
 		private async void _updateTimer_Tick(object sender, EventArgs e)
 		{
 			var doc = Document;
-			if (_renderer != null && _renderer.IsDirty && doc != null)
+			if (_renderer != null && _renderer.IsDirty(ClientRectangle) && doc != null)
 			{
 				await Relayout();
 			}
@@ -101,6 +101,8 @@ namespace Prime.HtmlView
 
 		protected override async void OnResize(EventArgs e)
 		{
+			base.OnResize(e);
+			
 			if (_renderer != null)
 				await Relayout();
 			//todo: Engine.CurrentMedia properties have to be updated

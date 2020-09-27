@@ -34,7 +34,7 @@ namespace Knyaz.Optimus.WinForms
 			_document = null;
 		}
 
-		public bool IsDirty => _isDocumentDirty;
+		public bool IsDirty(RectangleF rect) => _isDocumentDirty || !_lastBounds.Equals(rect);
 
 		private void OnNodeRemoved(Node arg1, Node arg2) => _isDocumentDirty = true;
 
