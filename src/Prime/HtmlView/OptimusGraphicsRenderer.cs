@@ -184,5 +184,7 @@ namespace Knyaz.Optimus.WinForms
 		{
 			return _layout? .FirstOrDefault(x => x?.Item2 is Types.RenderItem.Element renderItem && renderItem.Item.Node == node);
 		}
+
+		public void Invalidate() => _isDocumentDirty = true;
 	}
 }

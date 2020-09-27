@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.Controls;
 using Prime.DevTools;

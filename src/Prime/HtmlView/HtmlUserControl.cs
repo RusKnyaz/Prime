@@ -14,8 +14,8 @@ namespace Prime.HtmlView
     /// </summary>
     public partial class HtmlUserControl : UserControl
     {
-        private HtmlDocumentView _documentView;
-        private EmbeddedResourceProvider _resourceProvider;
+        private readonly HtmlDocumentView _documentView;
+        private readonly EmbeddedResourceProvider _resourceProvider;
 
         private Engine _engine;
         
@@ -63,10 +63,10 @@ namespace Prime.HtmlView
             _engine.CurrentMedia.Landscape = rect.Width > rect.Height;
 			
             var result = await _engine.OpenUrl("file://" + GetType().FullName);
+            
+            OnInitDocument(result.Document);
 
-            OnInitDocument(_engine.Document);
-
-            _documentView.Document = _engine.Document;
+            _documentView.Document = result.Document;
             
             Cursor = Cursors.Default;
         }

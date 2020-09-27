@@ -2,8 +2,10 @@
 using Knyaz.Optimus.Dom.Elements;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Knyaz.Optimus.Dom.Css;
 using Knyaz.Optimus.WinForms;
 
 namespace Prime.HtmlView
@@ -13,6 +15,8 @@ namespace Prime.HtmlView
 	/// </summary>
 	public partial class HtmlDocumentView : UserControl
 	{
+		private readonly ComboBox _comboBox;
+		
 		private OptimusGraphicsRenderer _renderer;
 		private Document _document;
 		private Exception _exception;
@@ -22,6 +26,9 @@ namespace Prime.HtmlView
 			InitializeComponent();
 			panel1.KeyPress += BrowserControl_KeyPress;
 			SetDoubleBuffered(panel1);
+			_comboBox = new ComboBox() { Visible = false};
+			Controls.Add(_comboBox);
+			_comboBox.BringToFront();
 		}
 		
 		public static void SetDoubleBuffered(System.Windows.Forms.Control c)
@@ -85,6 +92,43 @@ namespace Prime.HtmlView
 			
 			_renderer?.HitTest(e.X, e.Y, (rectangle, node) =>
 			{
+				//todo: do not use native combo box
+				if (node is Knyaz.Optimus.Dom.Elements.HtmlSelectElement selectElement && selectElement.Options.Length > 0)
+				{
+					_comboBox.DataSource = selectElement.Options.ToList();
+					_comboBox.DisplayMember = nameof(HtmlOptionElement.Text);
+					_comboBox.SelectedItem = selectElement.SelectedOptions.FirstOrDefault();
+					_comboBox.SelectionChangeCommitted += (o, args) =>
+					{
+						_comboBox.Visible = false;
+						_renderer.Invalidate();
+						Invalidate();
+						selectElement.SelectedOptions.Clear();
+						selectElement.SelectedOptions.Add((HtmlOptionElement)_comboBox.SelectedItem);
+					};
+					_comboBox.KeyUp += (o, args) =>
+					{
+						if (args.KeyCode == Keys.Escape)
+						{
+							_comboBox.Visible = false;
+							Invalidate();
+						}
+					};
+					_comboBox.Left = rectangle.Left;
+					_comboBox.Top = rectangle.Top;
+					_comboBox.Width = rectangle.Width;
+					_comboBox.Height = rectangle.Height;
+					var style = selectElement.OwnerDocument.DefaultView.GetComputedStyle(selectElement);
+					_comboBox.BackColor = ColorTranslator.FromHtml((string)style[Css.Background]);
+					_comboBox.ForeColor = ColorTranslator.FromHtml((string)style[Css.Background]);
+					var fontFamily = ((string) style[Css.FontFamily]).Split(',')[0].Trim();
+					var fontSize = float.TryParse((string) style[Css.FontSize], out var sz) ? sz : 12;
+					_comboBox.Font = new Font(fontFamily, fontSize);
+					_comboBox.Visible = true;
+					_comboBox.BringToFront();
+					Invalidate();
+				}
+				
 				NodeClick?.Invoke(this, new NodeEventArgs(node));
 				return false;
 			});
@@ -172,6 +216,9 @@ namespace Prime.HtmlView
 			{
 				_exception = ex;
 			}
+			
+			if(_comboBox.Visible)
+				_comboBox.Invalidate();
 		}
 
 		private Rectangle _highlight;
