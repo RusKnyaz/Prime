@@ -9,7 +9,7 @@ using Knyaz.Optimus.ResourceProviders;
 using Knyaz.Optimus.ScriptExecuting.Jint;
 using Knyaz.Optimus.Scripting.Jurassic;
 using Prime.Annotations;
-using Prime.HtmlView;
+using Prime.Styles;
 
 namespace Prime.Model
 {
@@ -27,7 +27,8 @@ namespace Prime.Model
 
 		private EngineBuilder ConfigureBuilder()
 		{
-			var builder = EngineBuilder.New().EnableCss();
+			var builder = EngineBuilder.New()
+				.EnableCss(css => css.UserAgentStyleSheet = StyleSheetFactory.Instance.GetBrowserDefault());
 			switch (Properties.Settings.Default.JsEngine)
 			{
 				case "JINT": builder.UseJint();break;
@@ -78,7 +79,6 @@ namespace Prime.Model
 				{
 					//Create new engine with specified authorization headers.
 					Engine = BuildEngine(login, password);
-					Engine.ComputedStylesEnabled = true;
 					
 					await OpenUrl(value);
 				}

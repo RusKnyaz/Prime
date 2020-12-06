@@ -7,6 +7,11 @@ namespace Prime.Controls
 {
 	public class SettingsControl : HtmlUserControl
 	{
+		public SettingsControl()
+		{
+			AddResource("Prime.Res.bootstrap.min.css", "text/css", () => R.BootstrapMinCss);
+		}
+		
 		protected override void OnInitDocument(Document document)
 		{
 			var jsEngineSelector = (HtmlSelectElement)document.GetElementById("jsEngine");

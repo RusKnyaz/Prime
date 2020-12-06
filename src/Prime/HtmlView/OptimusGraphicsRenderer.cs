@@ -134,8 +134,8 @@ namespace Knyaz.Optimus.WinForms
 		{
 			if (_layoutInProgress)
 			{
-				using(var font = new Font("Arial", 16))
-				using(var brush = new SolidBrush(Color.Khaki))
+				using(var font = new Font("Arial", 16, FontStyle.Bold))
+				using(var brush = new SolidBrush(Color.Blue))
 					graphics.DrawString("Processing...", font , brush, 10,10);
 				return;
 			}

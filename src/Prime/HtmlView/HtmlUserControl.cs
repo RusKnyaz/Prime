@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Knyaz.Optimus;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.ResourceProviders;
+using Prime.Styles;
 
 namespace Prime.HtmlView
 {
@@ -54,7 +55,7 @@ namespace Prime.HtmlView
             //Create engine with custom resource provider to load the template provided by HtmlUserControl inheritor.
 
             _engine = EngineBuilder.New()
-	            .EnableCss()
+	            .EnableCss(css => css.UserAgentStyleSheet = StyleSheetFactory.Instance.GetBrowserDefault())
 	            .SetResourceProvider(_resourceProvider)
 	            .Build();
             

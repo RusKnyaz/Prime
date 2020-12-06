@@ -12,8 +12,7 @@ namespace Prime.Controls
     {
         public LoginPasswordControl()
         {
-            InitializeComponent();
-            AddResource("Prime.Res.bootstrap.min.css", "text/css", () => typeof(LoginPasswordForm).Assembly.GetManifestResourceStream("Prime.Res.bootstrap.min.css"));
+            AddResource("Prime.Res.bootstrap.min.css", "text/css", () => R.BootstrapMinCss);
         }
         
         protected override void OnInitDocument(Document document)
