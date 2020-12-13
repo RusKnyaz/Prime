@@ -143,8 +143,14 @@ namespace Knyaz.Optimus.WinForms
 			var sz = GetSize();
 			if (!sz.IsEmpty)
 			{
+				var clipBounds = new Rectangle(
+					(int)graphics.VisibleClipBounds.X,
+					(int)graphics.VisibleClipBounds.Y,
+					(int)graphics.VisibleClipBounds.Width,
+					(int)graphics.VisibleClipBounds.Height); 
 				graphics.PageUnit = GraphicsUnit.Pixel;
-				OptimusRenderer.Render(_layout, graphics);
+				OptimusRenderer.Render(_layout.Where(x => x.Item1.Bottom > clipBounds.Top && x.Item1.Top < clipBounds.Bottom)
+					, graphics);
 			}
 		}
 
