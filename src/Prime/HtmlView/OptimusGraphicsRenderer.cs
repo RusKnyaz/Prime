@@ -159,31 +159,32 @@ namespace Knyaz.Optimus.WinForms
 			if (_layout == null)
 				return;
 			
-			OptimusRenderer.HitTest(_layout, x, y, FSharpFunc<Tuple<Rectangle, Types.RenderItem>, bool>.FromConverter(
-				t =>
+			var point = new Point(x, y);
+
+			var hitArea = _layout.LastOrDefault(area => area.Item1.Contains(point));
+
+			if (hitArea == null)
+				return;
+			
+			HtmlElement elt = null;
+
+			if (hitArea.Item2 is Types.RenderItem.Element qwe)
+			{
+				elt = qwe.Item.Node;
+			}
+			else if(hitArea.Item2 is Types.RenderItem.Text text)
+			{
+				elt = text.Item.Node.ParentNode as HtmlElement;
+			}
+
+			if (elt != null)
+			{
+				if (!handler(hitArea.Item1, elt))
 				{
-					HtmlElement elt = null;
-
-					if (t.Item2 is Types.RenderItem.Element qwe)
-					{
-						elt = qwe.Item.Node;
-					}
-					else if(t.Item2 is Types.RenderItem.Text text)
-					{
-						elt = text.Item.Node.ParentNode as HtmlElement;
-					}
-
-					if (elt != null)
-					{
-						if (!handler(new Rectangle(t.Item1.Left, t.Item1.Top, t.Item1.Width, t.Item1.Height), elt))
-						{
-							elt.OwnerDocument.ActiveElement = elt;
-							elt.Click();
-						}
-					}
-
-					return true;
-				}));
+					elt.OwnerDocument.ActiveElement = elt;
+					elt.Click();
+				}
+			}
 		}
 
 		public Tuple<Rectangle, Types.RenderItem> FindArea(Node node)

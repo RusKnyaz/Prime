@@ -168,10 +168,10 @@ namespace Prime
 		
 		private void ButtonSettingsClick(object sender, EventArgs e)
 		{
-			//todo: open settings form;
 			var form = new Form();
 			var settingsControl = new SettingsControl();
 			settingsControl.Dock = DockStyle.Fill;
+			settingsControl.OnSave += (o, args) => { form.Close(); };
 			form.Controls.Add(settingsControl);
 			form.ShowDialog(this);
 		}

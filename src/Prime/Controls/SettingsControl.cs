@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.HtmlView;
@@ -22,8 +25,11 @@ namespace Prime.Controls
 			btnSave.OnClick += evt =>
 			{
 				Settings.Default.JsEngine = jsEngineSelector.Value;
+				BeginInvoke(new Action(() => OnSave?.Invoke(this, EventArgs.Empty)));
 				return true;
 			};
 		}
+
+		public event EventHandler OnSave;
 	}
 }
