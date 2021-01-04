@@ -17,12 +17,14 @@ namespace Prime.Model
 	public class Browser : INotifyPropertyChanged
 	{
 		private readonly IConsole _console;
-		public Engine Engine ;
+		public Engine Engine;
 
 		public Browser(IConsole console)
 		{
 			_console = console;
 			Engine = BuildEngine();
+			if (console != null)
+				Engine.ScriptExecutor.OnException += ex => _console.Error(ex.Message);
 		}
 
 		private EngineBuilder ConfigureBuilder()
@@ -41,11 +43,27 @@ namespace Prime.Model
 		}
 		
 
-		private Engine BuildEngine() => ConfigureBuilder().Build();
+		private Engine BuildEngine() => ConfigureBuilder()
+			.ConfigureResourceProvider(r => r.Http().UsePrediction().Notify(OnRequest, OnResponse))
+			.Build();
+
+		private void OnResponse(ReceivedEventArguments arg)
+		{
+			if (_console != null &&
+				arg.Resource is HttpResponse http && http.StatusCode == HttpStatusCode.NotFound)
+			{
+				_console.Log("Error loading: " + http.Uri);
+			}
+		}
+
+		private void OnRequest(Request obj)
+		{
+		}
 
 		private Engine BuildEngine(string login, string password) =>
 			ConfigureBuilder()
-				.SetResourceProvider(new ResourceProviderBuilder().Http(x => x.Basic(login, password)).UsePrediction().Build())
+				.ConfigureResourceProvider(r => 
+					r.Http(x => x.Basic(login, password)).UsePrediction().Notify(OnRequest, OnResponse))
 				.Build();
 		
 		public Exception Exception { get; private set; }

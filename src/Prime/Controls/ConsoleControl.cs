@@ -20,28 +20,6 @@ namespace Prime.Controls
         public ConsoleControl()
         {
             InitializeComponent();
-//            _engine.Scripting.ScriptExecutionError+=ScriptingOnScriptExecutionError;
-            //_engine.PreHandleResponse+=EngineOnPreHandleResponse;
-        }
-
-        /*private void EngineOnPreHandleResponse(object sender, ResponseEventArgs e)
-        {
-            if (e.Response is HttpResponse http && http.StatusCode == HttpStatusCode.NotFound)
-            {
-                var node = (HtmlElement)Document.CreateElement("p");
-                node.ClassName = "error";
-                node.TextContent = "Error loading: " + http.Uri;
-                Document.Body.AppendChild(node);    
-            }
-        }*/
-
-
-        private void ScriptingOnScriptExecutionError(Script arg1, Exception ex)
-        {
-            var node = (HtmlElement)Document.CreateElement("p");
-            node.ClassName = "error";
-            node.TextContent = ex.Message;
-            Document.Body.AppendChild(node);
         }
 
         enum LogMessageType
@@ -50,8 +28,6 @@ namespace Prime.Controls
 	        Error, 
 	        Warning
         }
-        
-        
         private void WriteMessage(LogMessageType type, object obj)
         {
             var node = Document.CreateElement("p");
