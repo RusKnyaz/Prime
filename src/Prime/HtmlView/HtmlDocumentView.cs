@@ -159,6 +159,9 @@ namespace Prime.HtmlView
 				return;
 			
 			var cr = ClientRectangle;
+			//hack to avoid scrollbars flickering. Todo: revise it.
+			cr.Width-=10;
+			cr.Height-=10;
 			var oldCursor = Cursor;
 			Cursor = Cursors.WaitCursor;
 			try
