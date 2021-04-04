@@ -1,12 +1,8 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Text;
-using System.Text;
-using Knyaz.Optimus;
 using Knyaz.Optimus.Dom.Elements;
 using Knyaz.Optimus.Dom.Interfaces;
-using Knyaz.Optimus.ResourceProviders;
 using Prime.HtmlView;
 using HtmlElement = Knyaz.Optimus.Dom.Elements.HtmlElement;
 

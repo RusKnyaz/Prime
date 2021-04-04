@@ -46,19 +46,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Knyaz.Optimus, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.3.0.0-beta-267\lib\net452\Knyaz.Optimus.dll</HintPath>
+      <HintPath>..\packages\Knyaz.Optimus.3.0.0-beta-305\lib\net452\Knyaz.Optimus.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Knyaz.Optimus.Graphics, Version=0.2.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.Graphics.0.2.0-alpha-107\lib\net462\Knyaz.Optimus.Graphics.dll</HintPath>
+      <HintPath>..\packages\Knyaz.Optimus.Graphics.0.2.0-alpha-105\lib\net462\Knyaz.Optimus.Graphics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Knyaz.Optimus.Scripting.Jint, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.Scripting.Jint.1.0.0-beta-24\lib\net452\Knyaz.Optimus.Scripting.Jint.dll</HintPath>
+    <Reference Include="Knyaz.Optimus.Scripting.Jint, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Knyaz.Optimus.Scripting.Jint.3.0.0-beta-305\lib\net452\Knyaz.Optimus.Scripting.Jint.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Knyaz.Optimus.Scripting.Jurassic, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.Scripting.Jurassic.3.0.0-beta-30\lib\net452\Knyaz.Optimus.Scripting.Jurassic.dll</HintPath>
+      <HintPath>..\packages\Knyaz.Optimus.Scripting.Jurassic.3.0.0-beta-305\lib\net452\Knyaz.Optimus.Scripting.Jurassic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
