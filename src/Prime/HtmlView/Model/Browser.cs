@@ -44,7 +44,10 @@ namespace Prime.Model
 		
 
 		private Engine BuildEngine() => ConfigureBuilder()
-			.ConfigureResourceProvider(r => r.Http().UsePrediction().Notify(OnRequest, OnResponse))
+			.ConfigureResourceProvider(r => r.Http(h => h.ConfigureClientHandler(c =>
+				//avoid "System.Net.Http.HttpRequestException: The SSL connection could not be established,..."
+				c.ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true))
+				.UsePrediction().Notify(OnRequest, OnResponse))
 			.Build();
 
 		private void OnResponse(ReceivedEventArguments arg)
@@ -55,6 +58,7 @@ namespace Prime.Model
 				_console.Log("Error loading: " + http.Uri);
 			}
 		}
+		
 
 		private void OnRequest(Request obj)
 		{

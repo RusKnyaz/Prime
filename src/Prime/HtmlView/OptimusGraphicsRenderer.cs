@@ -15,6 +15,22 @@ namespace Knyaz.Optimus.WinForms
 {
 	public class OptimusGraphicsRenderer : IDisposable
 	{
+		class LayoutService : ILayoutService
+		{
+			private readonly OptimusGraphicsRenderer _renderer;
+
+			public LayoutService(OptimusGraphicsRenderer renderer) => _renderer = renderer;
+			public RectangleF[] GetElementBounds(Element element)
+			{
+				var layout = _renderer._layout;
+				if (layout == null)
+					return new RectangleF[0];
+
+				return layout.Where(x => x?.Item2 is Types.RenderItem.Element renderItem && renderItem.Item.Node == element)
+					.Select(x => new RectangleF(x.Item1.Left, x.Item1.Top, x.Item1.Width, x.Item1.Height)).ToArray();
+			}
+		}
+		
 		private static System.Drawing.Graphics _measureGraphics = System.Drawing.Graphics.FromImage(new Bitmap(1, 1));
 		
 		private Document _document = null;
@@ -23,6 +39,7 @@ namespace Knyaz.Optimus.WinForms
         public OptimusGraphicsRenderer(Document document)
 		{
 			_document = document;
+			_document.AttachLayoutService(new LayoutService(this));
 			document.NodeInserted += OnNodeInserted;
 			document.NodeRemoved += OnNodeRemoved;
 		}
