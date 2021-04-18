@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Knyaz.Optimus.Dom.Css;
+using Knyaz.Optimus.Dom.Events;
+using Knyaz.Optimus.Environment;
 using Knyaz.Optimus.WinForms;
 
 namespace Prime.HtmlView
@@ -149,6 +151,16 @@ namespace Prime.HtmlView
 			
 			if (_renderer != null)
 				await Relayout();
+
+			if (_document != null)
+			{
+				var window = (Window)_document.DefaultView;
+				var resizeEvent = (UIEvent)_document.CreateEvent("UIEvents");
+				resizeEvent.InitEvent("resize", true, false);
+				//todo: use window.NewUIEvent()
+				window.DispatchEvent(resizeEvent);
+			}
+			
 			//todo: Engine.CurrentMedia properties have to be updated
 		}
 
