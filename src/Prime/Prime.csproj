@@ -155,11 +155,12 @@
     <PackageReference Include="Knyaz.Optimus.Graphics">
       <Version>0.2.0-alpha-105</Version>
     </PackageReference>
+    <PackageReference Include="Knyaz.Optimus" Version="3.0.0-beta-314"/>
     <PackageReference Include="Knyaz.Optimus.Scripting.Jint">
-      <Version>3.0.0-beta-305</Version>
+      <Version>3.0.0-beta-314</Version>
     </PackageReference>
     <PackageReference Include="Knyaz.Optimus.Scripting.Jurassic">
-      <Version>3.0.0-beta-305</Version>
+      <Version>3.0.0-beta-314</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
       <Version>4.7.0</Version>

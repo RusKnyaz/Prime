@@ -36,18 +36,6 @@ namespace Prime.HtmlView
         public void AddResource( string path, string mimeType, Func<Stream> getStream) => 
 	        _resourceProvider.AddResource(path,  mimeType, getStream);
 
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-
-            if (_engine != null)
-            {
-                var rect = ClientRectangle;
-                _engine.CurrentMedia.Width = rect.Width;
-                _engine.CurrentMedia.Landscape = rect.Width > rect.Height;
-            }
-        }
-
         private async void InitView()
         {
             Cursor = Cursors.WaitCursor;
@@ -59,10 +47,6 @@ namespace Prime.HtmlView
 	            .SetResourceProvider(_resourceProvider)
 	            .Build();
             
-            var rect = ClientRectangle;
-            _engine.CurrentMedia.Width = rect.Width;
-            _engine.CurrentMedia.Landscape = rect.Width > rect.Height;
-			
             var result = await _engine.OpenUrl("file://" + GetType().FullName);
             
             OnInitDocument(result.Document);

@@ -154,14 +154,15 @@ namespace Prime.HtmlView
 
 			if (_document != null)
 			{
+				
 				var window = (Window)_document.DefaultView;
-				var resizeEvent = (UIEvent)_document.CreateEvent("UIEvents");
-				resizeEvent.InitEvent("resize", true, false);
-				//todo: use window.NewUIEvent()
+				var resizeEvent = window.NewUiEvent("resize",
+					new UiEventInitOptions {Bubbles = true, Cancelable = false}); 
 				window.DispatchEvent(resizeEvent);
+				var rect = ClientRectangle;
+				window.CurrentMedia.Width = rect.Width;
+				window.CurrentMedia.Landscape = rect.Width > rect.Height;
 			}
-			
-			//todo: Engine.CurrentMedia properties have to be updated
 		}
 
 		private bool _rendering = false;
