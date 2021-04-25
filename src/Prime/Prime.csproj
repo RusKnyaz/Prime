@@ -33,70 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\FSharp.Core.5.0.0\lib\netstandard2.0\FSharp.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="jint">
-      <HintPath>..\packages\jint.2.10.3\lib\net45\jint.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Jurassic, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Jurassic.3.1.0\lib\net45\Jurassic.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Knyaz.Optimus, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.3.0.0-beta-305\lib\net452\Knyaz.Optimus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Knyaz.Optimus.Graphics, Version=0.2.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.Graphics.0.2.0-alpha-105\lib\net462\Knyaz.Optimus.Graphics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Knyaz.Optimus.Scripting.Jint, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.Scripting.Jint.3.0.0-beta-305\lib\net452\Knyaz.Optimus.Scripting.Jint.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Knyaz.Optimus.Scripting.Jurassic, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Knyaz.Optimus.Scripting.Jurassic.3.0.0-beta-305\lib\net452\Knyaz.Optimus.Scripting.Jurassic.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Diagnostics.Contracts" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Drawing.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Drawing.Primitives.4.3.0\lib\net45\System.Drawing.Primitives.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -177,7 +117,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -208,6 +147,35 @@
     <Content Include="DevTools\LayoutInfoControl.resx" />
     <Content Include="HtmlView\HtmlDocumentView.resx" />
     <EmbeddedResource Include="Res\bootstrap.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="jint">
+      <Version>2.10.3</Version>
+    </PackageReference>
+    <PackageReference Include="Knyaz.Optimus.Graphics">
+      <Version>0.2.0-alpha-105</Version>
+    </PackageReference>
+    <PackageReference Include="Knyaz.Optimus.Scripting.Jint">
+      <Version>3.0.0-beta-305</Version>
+    </PackageReference>
+    <PackageReference Include="Knyaz.Optimus.Scripting.Jurassic">
+      <Version>3.0.0-beta-305</Version>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common">
+      <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Algorithms">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.X509Certificates">
+      <Version>4.3.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
