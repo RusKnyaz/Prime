@@ -89,7 +89,7 @@ namespace Prime.DevTools
 
 		private static string[] Properties = {
 			"color", "display", "float", "font-family", "font-size",
-			"margin-top","margin-right", "margin-bottom", "margin-left", "padding", "height", "width"};
+			"margin-top","margin-right", "margin-bottom", "margin-left", "padding", "height", "width","background-color"};
 
 		public virtual PropertyDescriptorCollection GetProperties(Attribute[] attributes)
 		{

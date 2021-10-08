@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Knyaz.Optimus.Dom.Interfaces;
+using Knyaz.Optimus.Dom.Elements;
 
 namespace Prime.Model
 {
 	class DomInspector : INotifyPropertyChanged
 	{
-		public INode SelectedNode
+		public Node SelectedNode
 		{
 			get { return _selectedNode; }
 			set
@@ -18,7 +18,7 @@ namespace Prime.Model
 		}
 
 		public bool SelectorActive;
-		private INode _selectedNode;
+		private Node _selectedNode;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

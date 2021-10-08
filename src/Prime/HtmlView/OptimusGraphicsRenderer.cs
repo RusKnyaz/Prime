@@ -39,7 +39,7 @@ namespace Knyaz.Optimus.WinForms
         public OptimusGraphicsRenderer(Document document)
 		{
 			_document = document;
-			_document.AttachLayoutService(new LayoutService(this));
+			((HtmlDocument)_document).AttachLayoutService(new LayoutService(this));
 			document.NodeInserted += OnNodeInserted;
 			document.NodeRemoved += OnNodeRemoved;
 		}
