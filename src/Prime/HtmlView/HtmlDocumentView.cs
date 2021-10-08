@@ -1,6 +1,7 @@
 ﻿using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Knyaz.Optimus.Dom.Css;
 using Knyaz.Optimus.Dom.Events;
 using Knyaz.Optimus.Environment;
 using Knyaz.Optimus.WinForms;
+using Prime.Model;
 
 namespace Prime.HtmlView
 {
@@ -20,6 +22,7 @@ namespace Prime.HtmlView
 		private readonly ComboBox _comboBox;
 		
 		private OptimusGraphicsRenderer _renderer;
+		private HtmlDocumentViewModel _model;
 		private Document _document;
 		private Exception _exception;
 
@@ -31,8 +34,16 @@ namespace Prime.HtmlView
 			_comboBox = new ComboBox() { Visible = false};
 			Controls.Add(_comboBox);
 			_comboBox.BringToFront();
+			
+			panel1.MouseMove+=Panel1OnMouseMove;
 		}
-		
+
+		private void Panel1OnMouseMove(object sender, MouseEventArgs e)
+		{
+			_model?.Hover(e.Location);
+		}
+
+
 		public static void SetDoubleBuffered(System.Windows.Forms.Control c)
 		{
 			//Taxes: Remote Desktop Connection and painting
@@ -64,13 +75,68 @@ namespace Prime.HtmlView
 					//timer1.Enabled = false;
 				}
 
+				if (_model != null)
+				{
+					_model.PropertyChanged-= ModelOnPropertyChanged;
+					_model = null;
+				}
+
 				_document = value;
 
 				if(_document != null)
 				{
 					//timer1.Enabled = true;
 					_renderer = new OptimusGraphicsRenderer(_document);
+					_model = new HtmlDocumentViewModel(_renderer);
+					_model.PropertyChanged+= ModelOnPropertyChanged;
+					_model.ShowComboBox+= ShowComboBox;
 				}
+			}
+		}
+
+		private void ShowComboBox(HitTestResult result)
+		{
+			var selectElement = (HtmlSelectElement)result.Elt;
+			_comboBox.DataSource = selectElement.Options.ToList();
+			_comboBox.DisplayMember = nameof(HtmlOptionElement.Text);
+			_comboBox.SelectedItem = selectElement.SelectedOptions.FirstOrDefault();
+			_comboBox.SelectionChangeCommitted += (o, args) =>
+			{
+				_comboBox.Visible = false;
+				_renderer.Invalidate();
+				Invalidate();
+				selectElement.SelectedOptions.Clear();
+				selectElement.SelectedOptions.Add((HtmlOptionElement)_comboBox.SelectedItem);
+			};
+			_comboBox.KeyUp += (o, args) =>
+			{
+				if (args.KeyCode == Keys.Escape)
+				{
+					_comboBox.Visible = false;
+					Invalidate();
+				}
+			};
+			var rectangle = result.Rect;
+			_comboBox.Left = rectangle.Left;
+			_comboBox.Top = rectangle.Top;
+			_comboBox.Width = rectangle.Width;
+			_comboBox.Height = rectangle.Height;
+			var style = selectElement.OwnerDocument.DefaultView.GetComputedStyle(selectElement);
+			_comboBox.BackColor = ColorTranslator.FromHtml((string)style[Css.Background]);
+			_comboBox.ForeColor = ColorTranslator.FromHtml((string)style[Css.Background]);
+			var fontFamily = ((string) style[Css.FontFamily]).Split(',')[0].Trim();
+			var fontSize = float.TryParse((string) style[Css.FontSize], out var sz) ? sz : 12;
+			_comboBox.Font = new Font(fontFamily, fontSize);
+			_comboBox.Visible = true;
+			_comboBox.BringToFront();
+			Invalidate();
+		}
+
+		private void ModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(HtmlDocumentViewModel.Cursor))
+			{
+				Cursor = _model.Cursor;
 			}
 		}
 
@@ -92,48 +158,7 @@ namespace Prime.HtmlView
 		{
 			panel1.Focus();
 			
-			_renderer?.HitTest(e.X, e.Y, (rectangle, node) =>
-			{
-				//todo: do not use native combo box
-				if (node is Knyaz.Optimus.Dom.Elements.HtmlSelectElement selectElement && selectElement.Options.Length > 0)
-				{
-					_comboBox.DataSource = selectElement.Options.ToList();
-					_comboBox.DisplayMember = nameof(HtmlOptionElement.Text);
-					_comboBox.SelectedItem = selectElement.SelectedOptions.FirstOrDefault();
-					_comboBox.SelectionChangeCommitted += (o, args) =>
-					{
-						_comboBox.Visible = false;
-						_renderer.Invalidate();
-						Invalidate();
-						selectElement.SelectedOptions.Clear();
-						selectElement.SelectedOptions.Add((HtmlOptionElement)_comboBox.SelectedItem);
-					};
-					_comboBox.KeyUp += (o, args) =>
-					{
-						if (args.KeyCode == Keys.Escape)
-						{
-							_comboBox.Visible = false;
-							Invalidate();
-						}
-					};
-					_comboBox.Left = rectangle.Left;
-					_comboBox.Top = rectangle.Top;
-					_comboBox.Width = rectangle.Width;
-					_comboBox.Height = rectangle.Height;
-					var style = selectElement.OwnerDocument.DefaultView.GetComputedStyle(selectElement);
-					_comboBox.BackColor = ColorTranslator.FromHtml((string)style[Css.Background]);
-					_comboBox.ForeColor = ColorTranslator.FromHtml((string)style[Css.Background]);
-					var fontFamily = ((string) style[Css.FontFamily]).Split(',')[0].Trim();
-					var fontSize = float.TryParse((string) style[Css.FontSize], out var sz) ? sz : 12;
-					_comboBox.Font = new Font(fontFamily, fontSize);
-					_comboBox.Visible = true;
-					_comboBox.BringToFront();
-					Invalidate();
-				}
-				
-				NodeClick?.Invoke(this, new NodeEventArgs(node));
-				return false;
-			});
+			_model.Click(e.Location);
 		}
 
 		private async void _updateTimer_Tick(object sender, EventArgs e)

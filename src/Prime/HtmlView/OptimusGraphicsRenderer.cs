@@ -13,7 +13,7 @@ using HtmlElement = Knyaz.Optimus.Dom.Elements.HtmlElement;
 
 namespace Knyaz.Optimus.WinForms
 {
-	public class OptimusGraphicsRenderer : IDisposable
+	internal class OptimusGraphicsRenderer : IDisposable
 	{
 		class LayoutService : ILayoutService
 		{
@@ -171,17 +171,17 @@ namespace Knyaz.Optimus.WinForms
 			}
 		}
 
-		public void HitTest(int x, int y, Func<Rectangle, Node, bool> handler)
+		public HitTestResult HitTest(int x, int y)
 		{
 			if (_layout == null)
-				return;
+				return HitTestResult.None;
 			
 			var point = new Point(x, y);
 
 			var hitArea = _layout.LastOrDefault(area => area.Item1.Contains(point));
 
 			if (hitArea == null)
-				return;
+				return HitTestResult.None;
 			
 			HtmlElement elt = null;
 
@@ -194,14 +194,7 @@ namespace Knyaz.Optimus.WinForms
 				elt = text.Item.Node.ParentNode as HtmlElement;
 			}
 
-			if (elt != null)
-			{
-				if (!handler(hitArea.Item1, elt))
-				{
-					elt.OwnerDocument.ActiveElement = elt;
-					elt.Click();
-				}
-			}
+			return elt == null ? HitTestResult.None : new HitTestResult(hitArea.Item1, elt);
 		}
 
 		public Tuple<Rectangle, Types.RenderItem> FindArea(Node node)
@@ -210,5 +203,21 @@ namespace Knyaz.Optimus.WinForms
 		}
 
 		public void Invalidate() => _isDocumentDirty = true;
+	}
+
+	class HitTestResult
+	{
+		public static readonly HitTestResult None = new HitTestResult(Rectangle.Empty, null);
+
+		public bool IsNone => ReferenceEquals(this, None);
+		
+		public Rectangle Rect { get; }
+		public HtmlElement Elt { get; }
+
+		public HitTestResult(Rectangle rect, HtmlElement elt)
+		{
+			Rect = rect;
+			Elt = elt;
+		}
 	}
 }

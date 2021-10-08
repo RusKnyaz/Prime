@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Prime.Tools
@@ -16,6 +17,15 @@ namespace Prime.Tools
 
 			return -1;
 		}
-		
+
+		public static IEnumerable<T> GetRecursive<T>(this T obj, Func<T, T> getItem)
+		{
+			while (obj != null)
+			{
+				yield return obj;
+
+				obj = getItem(obj);
+			}
+		}
 	}
 }
