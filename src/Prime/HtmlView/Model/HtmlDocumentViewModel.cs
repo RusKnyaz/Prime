@@ -3,19 +3,21 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Forms;
+using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.Dom.Elements;
 using Knyaz.Optimus.TestingTools;
 using Knyaz.Optimus.WinForms;
 using Prime.Annotations;
 using Prime.Tools;
-using HtmlElement = Knyaz.Optimus.Dom.Elements.HtmlElement;
+using Cursor = System.Windows.Forms.Cursor;
+using Cursors = System.Windows.Forms.Cursors;
 
 namespace Prime.Model
 {
 	internal class HtmlDocumentViewModel : INotifyPropertyChanged
 	{
 		private OptimusGraphicsRenderer _renderer;
+		private readonly Document _document;
 
 		public Cursor Cursor
 		{
@@ -36,9 +38,10 @@ namespace Prime.Model
 		
 		private Cursor _cursor;
 
-		public HtmlDocumentViewModel(OptimusGraphicsRenderer renderer)
+		public HtmlDocumentViewModel(OptimusGraphicsRenderer renderer, Document document)
 		{
 			_renderer = renderer;
+			_document = document;
 		}
 
 		public void Click(PointF location)
@@ -49,8 +52,7 @@ namespace Prime.Model
 			var result = _renderer.HitTest((int)location.X, (int)location.Y);
 
 			var node = result.Elt;
-			//todo: do not use native combo box
-			if (node is Knyaz.Optimus.Dom.Elements.HtmlSelectElement selectElement && selectElement.Options.Length > 0)
+			if (node is HtmlSelectElement selectElement && selectElement.Options.Length > 0)
 			{
 				ShowComboBox?.Invoke(result);
 			}
@@ -83,7 +85,7 @@ namespace Prime.Model
 			{
 				cursor = Cursors.Hand;
 			}
-			else if (node is Knyaz.Optimus.Dom.Elements.HtmlElement htmlElement)
+			else if (node is HtmlElement htmlElement)
 			{
 				var style = htmlElement.GetComputedStyle();
 				var cursorValue = style.GetPropertyValue("cursor"); 
@@ -141,6 +143,12 @@ namespace Prime.Model
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public void KeyPress(char keyChar)
+		{
+			if (_document.ActiveElement is HtmlInputElement elt)
+				elt.EnterText(elt.Value + keyChar);
 		}
 	}
 }

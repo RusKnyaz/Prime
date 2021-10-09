@@ -89,7 +89,7 @@ namespace Prime.HtmlView
 				{
 					//timer1.Enabled = true;
 					_renderer = new OptimusGraphicsRenderer(_document);
-					_model = new HtmlDocumentViewModel(_renderer);
+					_model = new HtmlDocumentViewModel(_renderer, _document);
 					_model.PropertyChanged+= ModelOnPropertyChanged;
 					_model.LinkClicked += s => LinkClicked?.Invoke(this, new LinkClickedEventArgs(s)); 
 					_model.ShowComboBox+= ShowComboBox;
@@ -99,6 +99,7 @@ namespace Prime.HtmlView
 
 		private void ShowComboBox(HitTestResult result)
 		{
+			//todo: do not use native combo box
 			var selectElement = (HtmlSelectElement)result.Elt;
 			_comboBox.DataSource = selectElement.Options.ToList();
 			_comboBox.DisplayMember = nameof(HtmlOptionElement.Text);
@@ -147,14 +148,7 @@ namespace Prime.HtmlView
 
 		private void BrowserControl_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			if (Document != null && Document.ActiveElement is HtmlInputElement elt)
-			{
-				elt.Value += e.KeyChar;
-				var evt = elt.OwnerDocument.CreateEvent("Event");
-				evt.InitEvent("change", false, false);
-				elt.DispatchEvent(evt);
-				panel1.Invalidate();
-			}
+			_model?.KeyPress(e.KeyChar);
 		}
 
 		private void On_MouseClick(object sender, MouseEventArgs e)
