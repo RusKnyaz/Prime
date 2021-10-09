@@ -9,6 +9,7 @@ using Prime.DevTools;
 using Prime.Model;
 using Prime.Properties;
 using Prime.HtmlView;
+using LinkClickedEventArgs = Prime.HtmlView.LinkClickedEventArgs;
 
 namespace Prime
 {
@@ -94,6 +95,12 @@ namespace Prime
 			Controls.Add(this._documentView);
 			_documentView.BringToFront();
 			_documentView.NodeClick += _browserControl_NodeClick;
+			_documentView.LinkClicked += LinkClicked;
+		}
+
+		private void LinkClicked(object sender, LinkClickedEventArgs e)
+		{
+			GoTo(e.Href);
 		}
 
 		private Tuple<string, string> Browser_OnAuthorize()

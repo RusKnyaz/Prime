@@ -32,6 +32,8 @@ namespace Prime.Model
 		}
 
 		public Action<HitTestResult> ShowComboBox;
+		public Action<string> LinkClicked;
+		
 		private Cursor _cursor;
 
 		public HtmlDocumentViewModel(OptimusGraphicsRenderer renderer)
@@ -55,7 +57,7 @@ namespace Prime.Model
 			else if(GetAnchor(node) is HtmlAnchorElement anchorElement
 				&& !string.IsNullOrEmpty(anchorElement.Href))
 			{
-				//todo: follow the link
+				LinkClicked?.Invoke(anchorElement.Href);
 			}
 			else if(node is HtmlElement elt)
 			{

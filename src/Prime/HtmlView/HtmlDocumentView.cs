@@ -26,6 +26,8 @@ namespace Prime.HtmlView
 		private Document _document;
 		private Exception _exception;
 
+		public EventHandler<LinkClickedEventArgs> LinkClicked;
+
 		public HtmlDocumentView()
 		{
 			InitializeComponent();
@@ -89,6 +91,7 @@ namespace Prime.HtmlView
 					_renderer = new OptimusGraphicsRenderer(_document);
 					_model = new HtmlDocumentViewModel(_renderer);
 					_model.PropertyChanged+= ModelOnPropertyChanged;
+					_model.LinkClicked += s => LinkClicked?.Invoke(this, new LinkClickedEventArgs(s)); 
 					_model.ShowComboBox+= ShowComboBox;
 				}
 			}
@@ -282,5 +285,12 @@ namespace Prime.HtmlView
 		{
 			Node = node;
 		}
+	}
+
+	public class LinkClickedEventArgs : EventArgs
+	{
+		public readonly string Href;
+
+		public LinkClickedEventArgs(string href) => Href = href;
 	}
 }
