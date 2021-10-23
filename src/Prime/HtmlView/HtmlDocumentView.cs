@@ -27,6 +27,7 @@ namespace Prime.HtmlView
 		private Exception _exception;
 
 		public EventHandler<LinkClickedEventArgs> LinkClicked;
+		public Func<string, System.IO.Stream> ResourceLocator;
 
 		public HtmlDocumentView()
 		{
@@ -89,6 +90,7 @@ namespace Prime.HtmlView
 				{
 					//timer1.Enabled = true;
 					_renderer = new OptimusGraphicsRenderer(_document);
+					_renderer.ResourceLocator = ResourceLocator;
 					_model = new HtmlDocumentViewModel(_renderer, _document);
 					_model.PropertyChanged+= ModelOnPropertyChanged;
 					_model.LinkClicked += s => LinkClicked?.Invoke(this, new LinkClickedEventArgs(s)); 

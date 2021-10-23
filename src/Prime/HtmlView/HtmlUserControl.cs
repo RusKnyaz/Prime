@@ -7,6 +7,7 @@ using Knyaz.Optimus;
 using Knyaz.Optimus.Dom;
 using Knyaz.Optimus.ResourceProviders;
 using Prime.Styles;
+using System.Linq;
 
 namespace Prime.HtmlView
 {
@@ -51,9 +52,26 @@ namespace Prime.HtmlView
             
             OnInitDocument(result.Document);
 
+            _documentView.ResourceLocator = url =>
+            {
+                //todo: expose some helper methods from Optimus;
+                var lp = new LinkProvider { Root = GetRoot(_engine.Uri) };
+                return _engine.ResourceProvider.SendRequestAsync(new Request(lp.MakeUri(url))).Result.Stream;
+            };
             _documentView.Document = result.Document;
             
+
             Cursor = Cursors.Default;
+        }
+
+        internal static string GetRoot(Uri uri)
+        {
+            var root = uri.GetLeftPart(UriPartial.Path);
+            var ur = new Uri(root);
+            if (ur.PathAndQuery != null && !ur.PathAndQuery.Contains('.') && ur.PathAndQuery.Last() != '/')
+                return root + "/";
+
+            return root;
         }
 
         protected virtual void OnInitDocument(Document document){}

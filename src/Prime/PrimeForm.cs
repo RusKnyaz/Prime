@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Linq;
 using Knyaz.Optimus.Dom.Elements;
 using Prime.Controls;
 using Prime.DevTools;
@@ -10,6 +11,7 @@ using Prime.Model;
 using Prime.Properties;
 using Prime.HtmlView;
 using LinkClickedEventArgs = Prime.HtmlView.LinkClickedEventArgs;
+using Knyaz.Optimus.ResourceProviders;
 
 namespace Prime
 {
@@ -158,14 +160,42 @@ namespace Prime
 
 		private void buttonGo_Click(object sender, EventArgs e) => GoTo(_textBoxUrl.Text);
 
+		async Task<Stream> GetResource(string url)
+        {
+			var lp = new LinkProvider { Root = GetRoot(Browser.Engine.Uri) };
+			var absUri = lp.MakeUri(url);
+			var request = new Request(absUri) { Method = "GET" };
+			request.Cookies = Browser.Engine.CookieContainer;
+			var response = await Browser.Engine.ResourceProvider.SendRequestAsync(request);
+			return response.Stream;
+		}
+
+		
 		private void GoTo(string url)
 		{
+			_documentView.ResourceLocator = u =>
+			{
+				return Task.Run(() => GetResource(u)).Result;
+			};
+
+
 			Task.Run(async () => {
 				await Browser.OpenUrl(url);
+				
 				_documentView.Document = Browser.Engine.Document;
 			});
 		}
-		
+
+		internal static string GetRoot(Uri uri)
+		{
+			var root = uri.GetLeftPart(UriPartial.Path);
+			var ur = new Uri(root);
+			if (ur.PathAndQuery != null && !ur.PathAndQuery.Contains('.') && ur.PathAndQuery.Last() != '/')
+				return root + "/";
+
+			return root;
+		}
+
 		private void ButtonSettingsClick(object sender, EventArgs e)
 		{
 			var form = new Form();

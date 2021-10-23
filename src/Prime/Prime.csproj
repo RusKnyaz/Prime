@@ -151,8 +151,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="jint" Version="2.10.3" />
-    <PackageReference Include="Knyaz.Optimus.Graphics" Version="0.2.0-alpha-112" />
-    <PackageReference Include="Knyaz.Optimus" Version="3.0.0" />
+    <PackageReference Include="Knyaz.Optimus.Graphics" Version="0.2.0-alpha-113" />
+    <PackageReference Include="Knyaz.Optimus" Version="3.0.1-beta-335" />
     <PackageReference Include="Knyaz.Optimus.Scripting.Jint" Version="3.0.0" />
     <PackageReference Include="Knyaz.Optimus.Scripting.Jurassic" Version="3.0.0" />
     <PackageReference Include="System.Drawing.Common">
