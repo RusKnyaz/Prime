@@ -15,6 +15,8 @@ namespace Knyaz.Optimus.WinForms
 {
 	internal class OptimusGraphicsRenderer : IDisposable
 	{
+		public Func<string, System.IO.Stream> ResourceLocator;
+
 		class LayoutService : ILayoutService
 		{
 			private readonly OptimusGraphicsRenderer _renderer;
@@ -166,7 +168,10 @@ namespace Knyaz.Optimus.WinForms
 					(int)graphics.VisibleClipBounds.Width,
 					(int)graphics.VisibleClipBounds.Height); 
 				graphics.PageUnit = GraphicsUnit.Pixel;
-				OptimusRenderer.Render(_layout.Where(x => x.Item1.Bottom > clipBounds.Top && x.Item1.Top < clipBounds.Bottom)
+
+				var locator = FuncConvert.FromFunc(ResourceLocator ?? (_ => null));
+
+				OptimusRenderer.Render(locator, _layout.Where(x => x.Item1.Bottom > clipBounds.Top && x.Item1.Top < clipBounds.Bottom)
 					, graphics);
 			}
 		}
