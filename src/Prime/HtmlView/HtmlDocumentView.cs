@@ -155,7 +155,7 @@ namespace Prime.HtmlView
 		{
 			panel1.Focus();
 			
-			_model.Click(e.Location);
+			_model?.Click(e.Location);
 		}
 
 		private async void _updateTimer_Tick(object sender, EventArgs e)
